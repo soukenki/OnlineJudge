@@ -11,12 +11,14 @@
 #include <fcntl.h>
 
 #include "../comm/util.hpp"
+#include "../comm/log.hpp"
 
 
 namespace ns_compiler
 {
-    // 引入路径拼接功能
+    // 引入路径拼接/LOG功能
     using namespace ns_util;
+    using namespace ns_log;
 
     class Compiler
     {
@@ -38,6 +40,8 @@ namespace ns_compiler
             pid_t pid = fork();
             if (pid < 0)
             {
+                LOG(ERROR);
+                std::cout << "内部错误， 创建子进程失败" << std::endl;
                 return false;
             }
             else if (pid == 0)
@@ -46,6 +50,8 @@ namespace ns_compiler
                 int _stderr = open(PathUtil::Stderr(file_name).c_str(), O_CREAT | O_WRONLY, 0644);  
                 if (_stderr < 0)
                 {
+                    LOG(WARNING);
+                    std::cout << "没有成功形成stderr文件" << std::endl;
                     exit(1);
                 }
                 // 重定向标准错误到_stderr
@@ -54,9 +60,11 @@ namespace ns_compiler
 
                 // 子进程：调用编译器，完成对代码的编译工作
                 // g++ -o target src -std=c++11
-                execlp("g++", "-o", PathUtil::Exe(file_name).c_str(), \
+                execlp("g++", "g++", "-o", PathUtil::Exe(file_name).c_str(), \
                         PathUtil::Src(file_name).c_str(), "-std=c++11", nullptr); // 进程替换, 结尾nullptr不要忘，程序替换不影响文件描述符表
-
+                
+                LOG(ERROR);
+                std::cout << "启动编译器g++失败，可能参数错误" << std::endl;
                 exit(2);
             }
             else
@@ -66,10 +74,14 @@ namespace ns_compiler
                 // 编译是否成功，看是否形成可执行文件
                 if (FileUtil::IsFileExists(PathUtil::Exe(file_name)))
                 {
+                    LOG(INFO);
+                    std::cout << PathUtil::Src(file_name) << " 编译成功" << std::endl;
                     return true; // 编译成功，运行文件存在
                 }
             }
 
+            LOG(ERROR);
+            std::cout << "编译失败，没有形成可执行程序" << std::endl;
             return false;  // 编译失败，运行文件不在
         }
     

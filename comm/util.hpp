@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 
 
@@ -59,6 +60,18 @@ namespace ns_util
                 return true;
             }
             return false;
+        }
+    };
+
+    class TimeUtil
+    {
+    public:
+        // 获取时间戳
+        static std::string GetTimeStamp()
+        {
+            struct timeval _time;
+            gettimeofday(&_time, nullptr);    
+            return std::to_string(_time.tv_sec);
         }
     };
 }
