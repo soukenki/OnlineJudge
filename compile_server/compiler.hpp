@@ -46,8 +46,10 @@ namespace ns_compiler
             }
             else if (pid == 0)
             {
+                umask(0);  // 默认umask清零
+
                 // 打开文件，把错误信息重定向到文件
-                int _stderr = open(PathUtil::Stderr(file_name).c_str(), O_CREAT | O_WRONLY, 0644);  
+                int _stderr = open(PathUtil::CompilerError(file_name).c_str(), O_CREAT | O_WRONLY, 0644);  
                 if (_stderr < 0)
                 {
                     LOG(WARNING);

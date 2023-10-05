@@ -28,6 +28,7 @@ namespace ns_util
             return path_name;
         }
 
+        // 编译时，需要的临时文件
         // 构建源文件路径，并加后缀的完整文件名
         static std::string Src(const std::string &file_name)
         {
@@ -40,17 +41,41 @@ namespace ns_util
             return AddSuffix(file_name, ".exe");
         }
 
+        // 构建编译时报错
+        static std::string CompilerError(const std::string &file_name)
+        {
+            return AddSuffix(file_name, ".compile_error");
+        }
+
+
+
+        // 运行时，需要的临时文件
+        // 构建标准输入
+        static std::string Stdin(const std::string &file_name)
+        {
+            return AddSuffix(file_name, ".stdin");
+        }
+
+        // 构建标准输出
+        static std::string Stdout(const std::string &file_name)
+        {
+            return AddSuffix(file_name, ".stdout");
+        }
+        
         // 构建该程序标准错误的完整路径，并加后缀名
         static std::string Stderr(const std::string &file_name)
         {
             return AddSuffix(file_name, ".stderr");
         }
+
+
     };
 
 
     class FileUtil
     {
     public:
+        // 判断文件是否存在
         static bool IsFileExists(const std::string &path_name)
         {
             struct stat st;
@@ -60,6 +85,24 @@ namespace ns_util
                 return true;
             }
             return false;
+        }
+
+        // 生成代码文件唯一名
+        static std::string UniqFileName()
+        {
+            return "";
+        }
+
+        // 代码写到文件（形成临时src文件）
+        static bool WriteFile(const std::string &target, const std::string &code)
+        {
+            return true;
+        }
+
+        // 读取文件内容
+        static std::string ReadFile(const std::string &target)
+        {
+            return "";
         }
     };
 
