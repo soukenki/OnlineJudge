@@ -3,6 +3,7 @@
 #pragma once
 
 #include <jsoncpp/json/json.h>
+#include <signal.h>
 
 #include "compiler.hpp"
 #include "runner.hpp"
@@ -19,13 +20,47 @@ namespace ns_compile_and_run
     class CompileAndRun
     {
     public:
-        // >0 <0 ==0 对于三种情况的处理
-        static std::string CodeToDesc(int code)
+        /* 对于三种情况的处理
+         * code>0：进程收到信号导致崩溃
+         * code<0：整个进程非运行报错（代码为空，编译报错等）
+         * code==0： 整个代码全部完成
+         */
+        static std::string CodeToDesc(int code, const std::string &file_name) // 待完善
         {
+            std::string desc;         // 其他错误信息
+            switch (code)
+            {
+            case 0:
+                desc = "コンパイルと実行が完了された";
+                break;
+            case -1:
+                desc = "送信されたコードが空である";
+                break;
+            case -2:
+                desc = "不明なエラーが発生された";
+                break;
+            case -3:
+                // desc = "コンパイルの際にエラーが発生された";
+                FileUtil::ReadFile(PathUtil::CompilerError(file_name), &desc, true); // 读取编译错误文件内容
+                break;
+            case SIGABRT: // 6
+                desc = "メモリが範囲を超えている";
+                break;
+            case SIGXCPU: // 24
+                desc = "CPU使用率のタイムアウト";
+                break;
+            case SIGFPE: // 8
+                desc = "浮動小数点オーバーフロー";
+                break;
+            default:
+                desc = "エラー: " + std::to_string(code);
+                break;
+            }
 
+            return desc;
         }
 
-        /*************************
+        /*** 执行 **************
          * 输入：
          * code：用户提交的代码
          * input：用户给自己提交的代码对应的输入（不处理）
@@ -100,17 +135,22 @@ namespace ns_compile_and_run
 
         END:
             out_value["status"] = status_code;
-            out_value["reason"] = CodeToDesc(status_code);
+            out_value["reason"] = CodeToDesc(status_code, file_name);
             if (status_code == 0)
             {
-                // 整个过程全部成功
-                out_value["stdout"] = FileUtil::ReadFile(PathUtil::Stdout(file_name));  // 读文件内容
-                out_value["stderr"] = FileUtil::ReadFile(PathUtil::Stderr(file_name));
+                // 整个过程全部成功，读取文件内容
+                std::string _stdout;
+                FileUtil::ReadFile(PathUtil::Stdout(file_name), &_stdout, true); // 读文件内容到_stdout，true保留\n
+                out_value["stdout"] = _stdout;
+
+                std::string _stderr;
+                FileUtil::ReadFile(PathUtil::Stderr(file_name), &_stderr, true);
+                out_value["stderr"] = _stderr;
             }
 
             // 序列化
             Json::StyledWriter writer;
-            *out_json = writer.write(out_value);  // 通过 输出型参数 回传
+            *out_json = writer.write(out_value); // 通过 输出型参数 回传
         }
     };
 }

@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <atomic>
+#include <fstream>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -13,6 +15,26 @@
 
 namespace ns_util
 {
+    class TimeUtil
+    {
+    public:
+        // 获取时间戳 秒
+        static std::string GetTimeStamp()
+        {
+            struct timeval _time;
+            gettimeofday(&_time, nullptr);    
+            return std::to_string(_time.tv_sec);
+        }
+
+        // 获得 毫秒 时间戳
+        static std::string GetTimeMs()
+        {
+            struct timeval _time;
+            gettimeofday(&_time, nullptr);
+            return std::to_string(_time.tv_sec * 1000 + _time.tv_usec / 1000); // 毫秒级时间戳
+        }
+    };
+
     const std::string temp_path = "./temp/";  // 路径
 
     class PathUtil
@@ -90,31 +112,56 @@ namespace ns_util
         // 生成代码文件唯一名
         static std::string UniqFileName()
         {
-            return "";
+            static std::atomic_uint id(0);  
+            id++; // id每次操作都是原子的
+            // 毫秒级时间戳+原子性递增唯一值：保证唯一性
+            std::string ms = TimeUtil::GetTimeMs();
+            std::string uniq_id = std::to_string(id);
+            return ms + "_" + uniq_id;
         }
 
         // 代码写到文件（形成临时src文件）
-        static bool WriteFile(const std::string &target, const std::string &code)
+        static bool WriteFile(const std::string &target, const std::string &content)
         {
+            std::ofstream out(target);
+            if (!out.is_open())
+            {
+                // 文件流打开失败，写入失败
+                return false;
+            }
+
+            out.write(content.c_str(), content.size());  // 写入
+            
+            out.close();  // 关闭文件流
+            
             return true;
         }
 
         // 读取文件内容
-        static std::string ReadFile(const std::string &target)
+        static bool ReadFile(const std::string &target, std::string *content, bool keep = false)
         {
-            return "";
+            (*content).clear();   // 清空
+
+            std::ifstream in(target);  // 打开流
+            if (!in.is_open())
+            {
+                return false;
+            }
+
+            std::string line;
+            // getline函数不保存行分隔符，如果需要保留\n，设置keep值为true，默认是false
+            // getline内部重载了强制类型转换，所以while能直接判断它的返回值
+            // 从in的流里面读，读到line中
+            while (std::getline(in, line))
+            {
+                (*content) += line;
+                (*content) += (keep ? "\n" : "");
+            }
+
+            in.close();  // 关闭文件流
+            return true;
         }
     };
 
-    class TimeUtil
-    {
-    public:
-        // 获取时间戳
-        static std::string GetTimeStamp()
-        {
-            struct timeval _time;
-            gettimeofday(&_time, nullptr);    
-            return std::to_string(_time.tv_sec);
-        }
-    };
+
 }
