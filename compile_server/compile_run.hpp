@@ -4,6 +4,7 @@
 
 #include <jsoncpp/json/json.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "compiler.hpp"
 #include "runner.hpp"
@@ -60,6 +61,39 @@ namespace ns_compile_and_run
             return desc;
         }
 
+
+        // 清理临时文件
+        static void RemoveTempFile(std::string &file_name)
+        {
+            std::string _src = PathUtil::Src(file_name);
+            if (FileUtil::IsFileExists(_src))
+            {
+                // unlink删除文件
+                unlink(_src.c_str());
+            }
+
+            std::string _compiler_error = PathUtil::CompilerError(file_name);
+            if (FileUtil::IsFileExists(_compiler_error))
+                unlink(_compiler_error.c_str());
+
+            std::string _execute = PathUtil::Exe(file_name);
+            if (FileUtil::IsFileExists(_execute))
+                unlink(_execute.c_str());
+
+
+            std::string _stdin = PathUtil::Stdin(file_name);
+            if (FileUtil::IsFileExists(_stdin))
+                unlink(_stdin.c_str());
+            
+            std::string _stdout = PathUtil::Stdout(file_name);
+            if (FileUtil::IsFileExists(_stdout))
+                unlink(_stdout.c_str());
+            
+            std::string _stderr = PathUtil::Stderr(file_name);
+            if (FileUtil::IsFileExists(_stderr))
+                unlink(_stderr.c_str());        
+        }
+
         /*** 执行 **************
          * 输入：
          * code：用户提交的代码
@@ -74,7 +108,7 @@ namespace ns_compile_and_run
          * stderr：我的程序运行完的错误结果（选填）
          *
          * 参数：
-         * in_json: {"code":"#include...", "input":"..", "cpu_limit":1, "mem_limit":1024}
+         * in_json: {"code":"#include...", "input":"..输入", "cpu_limit":1, "mem_limit":1024}
          * out_json: {"status":"0", "reason":"", "stdout":"", "stderr":""}
          **************************/
         static void Start(const std::string &in_json, std::string *out_json)
@@ -151,6 +185,9 @@ namespace ns_compile_and_run
             // 序列化
             Json::StyledWriter writer;
             *out_json = writer.write(out_value); // 通过 输出型参数 回传
+        
+            // 清理临时文件
+            RemoveTempFile(file_name);
         }
     };
 }
