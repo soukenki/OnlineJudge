@@ -163,5 +163,17 @@ namespace ns_util
         }
     };
 
+    class StringUtil
+    {
+    public:
+        /* 切分字符串 
+         * str：输入型，目标要切分的字符串
+         * target：输出型，保存切分完毕的结果
+         * sep：指定的分割符
+        ************************************/ 
+        static void SplitString(const std::string &str, std::vector<std::string> *target, std::string sep)
+        {
 
+        }
+    };
 }
