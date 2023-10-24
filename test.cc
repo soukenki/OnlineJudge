@@ -18,13 +18,14 @@ void handler(int signo)
 int main()
 {
     std::vector<std::string> tokens;
-    const std::string str = "1:判断回文:简单:1:30000";
+    const std::string str = "1:判断回文::::::简单:1:30000";
     const std::string sep = ":"; 
     boost::split(tokens, str, boost::is_any_of(sep), boost::algorithm::token_compress_on); // 放到哪，切分谁，分割符是谁，连续出现分隔符时是否保留
+    // boost::split(tokens, str, boost::is_any_of(sep), boost::algorithm::token_compress_off); // 放到哪，切分谁，分割符是谁，连续出现分隔符时是否保留
 
     for (auto &iter : tokens)
     {
-        std::cout << *iter << std::endl;
+        std::cout << iter << std::endl;
     }
 
     // 信号

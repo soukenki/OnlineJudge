@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/time.h>
-
+#include <boost/algorithm/string.hpp>
 
 
 namespace ns_util
@@ -173,7 +173,8 @@ namespace ns_util
         ************************************/ 
         static void SplitString(const std::string &str, std::vector<std::string> *target, std::string sep)
         {
-
+            // boost 切分
+            boost::split((*target), str, boost::is_any_of(sep), boost::algorithm::token_compress_on); // 放到哪，切分谁，分割符是谁，连续出现分隔符时是否保留
         }
     };
 }
