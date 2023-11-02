@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問題リスト</title>
+</head>
+
+<body>
+    <table>
+        <tr>
+            <th>番号</th>
+            <th>テーマ</th>
+            <th>レベル</th>
+        </tr>
+        {{#question_list}}
+        <tr>
+            <td>{{number}}</td>
+            <td><a href="/question/{{number}}">{{title}}</a></td>
+            <td>{{star}}</td>
+        </tr>
+        {{/question_list}}
+    </table>
+</body>
+
+</html>

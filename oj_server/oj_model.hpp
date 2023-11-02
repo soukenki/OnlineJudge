@@ -1,3 +1,5 @@
+// 数据交互模块，对题库增删改查
+
 #pragma once 
 
 #include <iostream>
@@ -97,6 +99,7 @@ namespace ns_model
             LOG(INFO);
             std::cout << "加载题库...成功！" << std::endl;
             in.close();  // 关闭文件流
+            
             return true;
         }
 
