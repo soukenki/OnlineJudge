@@ -9,10 +9,13 @@
 #include <cassert>
 #include <fstream>
 
+#include <jsoncpp/json/json.h>
+
 #include "oj_model.hpp"
 #include "oj_view.hpp"
 #include "../comm/log.hpp"
 #include "../comm/util.hpp"
+#include "../comm/httplib.h"
 
 namespace ns_control
 {
@@ -21,6 +24,7 @@ namespace ns_control
     using namespace ns_util;
     using namespace ns_model;
     using namespace ns_view;
+    using namespace httplib;
 
     // 提供服务的主机
     class Machine
@@ -164,7 +168,7 @@ namespace ns_control
             {
                 _mtx.unlock();
                 LOG(FATAL);
-                std::cout << "すべてのサーバーがオフラインです。できるだけ早く修正してください" << std::endl;
+                std::cout << "すべてのサーバーがオフラインになり、できるだけ早く修正してください" << std::endl;
                 return false;
             }
 
@@ -173,7 +177,7 @@ namespace ns_control
             *id = _online[0];
             *m = &_machines[_online[0]];
 
-            for (int i = 0; i < online_num; i++) // 遍历
+            for (int i = 1; i < online_num; i++) // 遍历
             {
                 uint64_t curr_load = _machines[_online[i]].Load();
                 if (min_load > curr_load)
@@ -189,13 +193,50 @@ namespace ns_control
         }
 
         // 离线主机
-        void OfflineMachine()
+        void OfflineMachine(int which)
         {
+            _mtx.lock();
+
+            for (auto iter = _online.begin(); iter != _online.end(); ++iter)
+            {
+                if (*iter == which)
+                {
+                    // 要离线的主机找到了
+                    _online.erase(iter);         // 删除在线主机
+                    _offline.push_back(*iter);   // 增加离线主机
+                    break;   // 因为有break，所以暂时不考虑迭代器失效的问题
+                }
+            }
+            
+            _mtx.unlock();
         }
 
         // 上线主机
         void OnlineMachine()
         {
+            // 当所有主机都离线的时候，统一上线
+        }
+
+        // for test
+        void ShowMachine()
+        {
+            _mtx.lock();
+            
+            std::cout << "現在オンラインのサーバーのリスト:";
+            for (auto &id : _online)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+
+            std::cout << "現在オフラインのサーバーのリスト:";
+            for (auto &id : _offline)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+            
+            _mtx.unlock();
         }
 
     private:
@@ -213,12 +254,10 @@ namespace ns_control
     {
     public:
         Control()
-        {
-        }
+        {}
 
         ~Control()
-        {
-        }
+        {}
 
         // 根据题目数据构建网页    html：输出型参数
         // 全部题目
@@ -259,16 +298,76 @@ namespace ns_control
         }
 
         // 判题
-        // id: 100
         // code: #include...
         // input: ""
-        void Judge(const std::string in_json, std::string *out_json)
+        void Judge(const std::string &number, const std::string in_json, std::string *out_json)
         {
+            // 0. 根据题目编号number，拿到对应题目细节
+            struct ns_model::Question q;
+            _model.GetOneQuestion(number, &q);
+            
             // 1. in_json进行反序列化，得到题目id和用户提交的源代码，input
+            Json::Reader reader;
+            Json::Value in_value;
+            reader.parse(in_json, in_value);   // 反序列化到in_value
+            std::string code = in_value["code"].asString();  // 用户代码
+
             // 2. 重新拼接用户代码 + 测试用例代码，形成新的代码
+            Json::Value compile_value;
+            compile_value["input"] = in_value["input"].asString();
+            compile_value["code"] = code + q.tail;     // 加测试用例
+            compile_value["cpu_limit"] = q.cpu_limit;  // Json::Value可以直接接收int，string等
+            compile_value["mem-limit"] = q.men_limit;
+            
+            Json::FastWriter writer;
+            std::string compile_string = writer.write(compile_value);   // 序列化
+
             // 3. 选择负载最低的主机（差错处理）
-            // 4. 然后发起http请求，得到结果
-            // 5. 将结果赋值给out_json
+            // 规则：一直选择，直到主机可用，否则就是全部挂掉
+            while (true)
+            {
+                int id = 0;
+                Machine *m = nullptr;
+                if (!_load_blance.SmartChoice(&id, &m))
+                {
+                    break;  // 所有主机挂了
+                }
+
+                LOG(INFO);
+                std::cout << "サーバーの請求は成功した。サーバーのID: " << id << " 詳細: " << m->_ip << ":" << m->_port << std::endl;
+            
+                // 4. 然后发起http请求，得到结果
+                httplib::Client cli(m->_ip, m->_port);
+                m->IncLoad();      // 负载数++
+
+                if (auto res = cli.Post("/compile_and_run", compile_string, "application/json;charset=utf-8"))
+                {
+                    // 请求成功
+                    // 5. 将结果赋值给out_json
+                    if (res->status == 200)
+                    {
+                        // 状态码为200，才算成功被请求，才取body值
+                        *out_json = res->body;
+                        m->DecLoad();   // 负载数--
+                        LOG(INFO);
+                        std::cout << "コンパイルと実行の請求は成功した.." << std::endl;
+                        break;
+                    }
+                    
+                    // 状态码不为200，减少负载，重新循环
+                    m->DecLoad();   // 负载数--
+                }
+                else
+                {
+                    // 请求失败
+                    LOG(ERROR);
+                    std::cout << "サーバーの請求は失敗した。サーバーのID: " << id << " 詳細: " << m->_ip << ":" << m->_port << "サーバーがオフラインになっている可能性がある" << std::endl;
+                    m->DecLoad();   // 负载数--   这里请求失败可以不减少负载，因为失败后负载会清零
+                    _load_blance.OfflineMachine(id);   // 离线
+                    _load_blance.ShowMachine();       // 只是为了调试方便
+                }
+            }
+
         }
 
     private:

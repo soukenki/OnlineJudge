@@ -120,7 +120,7 @@ namespace ns_model
             return true;
         }
 
-        // 获取一个题目
+        // 获取一个题目    number：题目编号  q：输出型参数
         bool GetOneQuestion(const std::string &number, Question *q)
         {
             const auto& iter = questions.find(number);
