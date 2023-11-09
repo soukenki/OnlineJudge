@@ -39,10 +39,16 @@ int main()
 
 
     // 用户提交代码。使用判题功能（1,每道题的测试用例 2,compile_and_run）
-    svr.Get(R"(/judge/(\d+))", [](const Request &req, Response &resp){
+    svr.Post(R"(/judge/(\d+))", [&ctrl](const Request &req, Response &resp){
         std::string number = req.matches[1];
-        resp.set_content("指定された問題 " + number + " のテスト", "text/plain; charset=utf-8");
+        // resp.set_content("指定された問題 " + number + " のテスト", "text/plain; charset=utf-8");
+
+        std::string result_json;
+        ctrl.Judge(number, req.body, &result_json);   
+        resp.set_content(result_json, "application/json;charset=utf-8");
+    
     });
+
 
     svr.set_base_dir("./wwwroot");
     

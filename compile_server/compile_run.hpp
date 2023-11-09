@@ -187,7 +187,7 @@ namespace ns_compile_and_run
             *out_json = writer.write(out_value); // 通过 输出型参数 回传
         
             // 清理临时文件
-            RemoveTempFile(file_name);
+            //RemoveTempFile(file_name);
         }
     };
 }

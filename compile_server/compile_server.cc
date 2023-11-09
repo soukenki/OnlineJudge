@@ -25,10 +25,10 @@ int main(int argc, char *argv[])
 
     Server svr;
 
-    svr.Get("/hello", [](const Request &req, Response &resp){
-        // 基本测试
-        resp.set_content("你好呀 hello http!!!!!こんにちは！私は波奈子です", "text/plain;charset=utf-8");
-    });
+    // svr.Get("/hello", [](const Request &req, Response &resp){
+    //     // 基本测试
+    //     resp.set_content("你好呀 hello http!!!!!こんにちは！私は波奈子です", "text/plain;charset=utf-8");
+    // });
 
     // svr.set_base_dir("./wwwroot");
     svr.Post("/compile_and_run", [](const Request &req, Response &resp){
@@ -52,30 +52,31 @@ int main(int argc, char *argv[])
     // out_json: {"status":"0", "reason":"", "stdout":"", "stderr":""}
 
     // test客户端的json
-    std::string in_json;
+    // std::string in_json;
 
-    Json::Value in_value;
-    in_value["code"] = R"(
-    #include <iostream>
-    int main(){
-        std::cout << "code666666666666666" << std::endl;
-        int a = 5;
-        jhjhbjhb
-        return 0;
-    })";
-    in_value["input"] = "";
-    in_value["cpu_limit"] = 1;
-    in_value["mem_limit"] = 10240 * 3;  // 30MB
+    // Json::Value in_value;
+    // // in_value["code"] = R"(
+    // // #include <iostream>
+    // // int main(){
+    // //     std::cout << "code666666666666666" << std::endl;
+    // //     int a = 5;
+    // //     jhjhbjhb
+    // //     return 0;
+    // // })";    
+    // in_value["code"] = "";
+    // in_value["input"] = "";
+    // in_value["cpu_limit"] = 1;
+    // in_value["mem_limit"] = 10240 * 3;  // 30MB
     
-    Json::FastWriter writer;
-    in_json = writer.write(in_value);  // 序列化
-    std::cout << in_json << std::endl;
+    // Json::FastWriter writer;
+    // in_json = writer.write(in_value);  // 序列化
+    // std::cout << in_json << std::endl;
 
 
-    std::string out_json;  // 这是之后输出返回给客户端的json
-    CompileAndRun::Start(in_json, &out_json);
+    // std::string out_json;  // 这是之后输出返回给客户端的json
+    // CompileAndRun::Start(in_json, &out_json);
 
-    std::cout << out_json << std::endl;
+    // std::cout << out_json << std::endl;
 
     return 0;
 }

@@ -5,38 +5,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>学生試験システム</title>
+    <style>
+        /* 起手式, 100%保证我们的样式设置可以不受默认影响 */
+        * {
+            /* 消除网页的默认外边距 */
+            margin: 0px;
+            /* 消除网页的默认内边距 */
+            padding: 0px;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container .content {
+            /* 设置标签的宽度 */
+            width: 800px;
+            /* 用来调试 */
+            /* background-color: #ccc; */
+            /* 整体居中 */
+            margin: 0px auto;
+            /* 设置文字居中 */
+            text-align: center;
+            /* 设置上外边距 */
+            margin-top: 200px;
+        }
+
+        .container .content .font_ {
+            /* 设置标签为块级元素，独占一行，可以设置高度宽度等属性 */
+            display: block;
+            /* 设置每个文字的上外边距 */
+            margin-top: 20px;
+            /* 去掉a标签的下划线 */
+            text-decoration: none;
+            /* 设置字体大小 
+            font-size: larger; */
+        }
+
+
+        .container .navbar {
+            width: 100%;
+            height: 50px;
+            background-color: grey;
+            /* 给父级标签设置overflow，取消后续float带来的影响 */
+            overflow: hidden;
+        }
+
+        .container .navbar a {
+            /* 设置a标签是行内块元素，允许你设置宽度 */
+            display: inline-block;
+            /* 设置a标签的宽度,a标签默认行内元素，无法设置宽度 */
+            width: 200px;
+            /* 设置字体颜色 */
+            color: white;
+            /* 设置字体的大小 */
+            font-size: large;
+            /* 设置文字的高度和导航栏一样的高度 */
+            line-height: 50px;
+            /* 去掉a标签的下划线 */
+            text-decoration: none;
+            /* 设置a标签中的文字居中 */
+            text-align: center;
+        }
+
+        /* 设置鼠标事件 */
+        .container .navbar a:hover {
+            background-color: blue;
+        }
+
+        .container .navbar .login {
+            float: right;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>学生試験システム</h1>
-    <p>プログラミング試験のために作った</p>
-    <a href="/all_questions">こちらにクリックしてから、試験をはじめる</a>
-    <!-- <table>
-        <tr>
-            <th>問題番号</th>
-            <th>テーマ</th>
-            <th>レベル</th>
-        </tr>
-        <tr>
+    <div class="container">
+        <!-- 导航栏-->
+        <div class="navbar">
+            <a href="/">ホーム</a>
+            <a href="/all_questions">試験問題</a>
+            <!-- <a href="#">メッセージ</a> -->
+            <a class="login" href="#">ログイン</a>
+            <a href="#">本システムについて</a>
+        </div>
+        <!-- 网页内容-->
+        <div class="content">
+            <h1 class="font_">学生試験システム</h1>
+            <p class="font_">プログラミング試験のために作った</p>
+            <a class="font_" href="/all_questions">こちらにクリックしてから、試験をはじめる</a>
+        </div>
+    </div>
 
-            <td>1111</td>
-            <td>22</td>
-            <td>3</td>
-        </tr>
-        <tr>
-
-            <td>1111</td>
-            <td>22</td>
-            <td>3</td>
-        </tr>
-        <tr>
-
-            <td>1111</td>
-            <td>22</td>
-            <td>3</td>
-        </tr>
-
-    </table> -->
 </body>
 
 </html>

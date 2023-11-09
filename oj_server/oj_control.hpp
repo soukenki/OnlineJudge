@@ -203,7 +203,7 @@ namespace ns_control
                 {
                     // 要离线的主机找到了
                     _online.erase(iter);         // 删除在线主机
-                    _offline.push_back(*iter);   // 增加离线主机
+                    _offline.push_back(which);   // 增加离线主机
                     break;   // 因为有break，所以暂时不考虑迭代器失效的问题
                 }
             }
@@ -222,14 +222,14 @@ namespace ns_control
         {
             _mtx.lock();
             
-            std::cout << "現在オンラインのサーバーのリスト:";
+            std::cout << "OnLineのサーバー:";
             for (auto &id : _online)
             {
                 std::cout << id << " ";
             }
             std::cout << std::endl;
 
-            std::cout << "現在オフラインのサーバーのリスト:";
+            std::cout << "OffLineのサーバー:";
             for (auto &id : _offline)
             {
                 std::cout << id << " ";

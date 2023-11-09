@@ -91,9 +91,14 @@ namespace ns_runner
 
                 // 限制内存/CPU
                 ns_limit::SetProcLimit(cpu_limit, mem_limit);
+                
+                std::cout << "限制内存/CPU成功" << std::endl;
 
                 // 程序替换
                 execl(_execute.c_str(), _execute.c_str(), nullptr);  // 执行谁，命令行上如何执行
+                
+                std::cout << "程序替换成功" << std::endl;
+                
                 exit(1);
             }
             else

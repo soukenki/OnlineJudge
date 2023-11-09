@@ -63,7 +63,7 @@ namespace ns_compiler
                 // 子进程：调用编译器，完成对代码的编译工作
                 // g++ -o target src -std=c++11
                 execlp("g++", "g++", "-o", PathUtil::Exe(file_name).c_str(), \
-                        PathUtil::Src(file_name).c_str(), "-std=c++11", nullptr); // 进程替换, 结尾nullptr不要忘，程序替换不影响文件描述符表
+                        PathUtil::Src(file_name).c_str(), "-D", "COMPILER_ONLINE", "-std=c++11", nullptr); // 进程替换, 结尾nullptr不要忘，程序替换不影响文件描述符表
                 
                 LOG(ERROR);
                 std::cout << "启动编译器g++失败，可能参数错误" << std::endl;
