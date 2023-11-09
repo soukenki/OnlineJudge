@@ -68,7 +68,7 @@
             font-size: large;
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
             margin-top: 50px;
-            background-color: rgb(243, 248, 246);
+            background-color: #FFF;
         }
 
         .container .question_list h1 {
@@ -83,12 +83,13 @@
         }
 
         .container .question_list table .item a {
-            text-decoration: none;
+            text-decoration: underline red;
             color: black;
         }
 
         .container .question_list table .item a:hover {
             color: red;
+            font-size: larger;
             text-decoration: underline;
         }
 
@@ -110,8 +111,8 @@
             <a href="/">ホーム</a>
             <a href="/all_questions">試験問題</a>
             <!-- <a href="#">メッセージ</a> -->
-            <a class="login" href="#">ログイン</a>
-            <a href="/about">本システムについて</a>
+            <a class="login" href="#" onclick="login()">ログイン</a>
+            <!-- <a href="">本システムについて</a> -->
         </div>
         <div class="question_list">
             <h2>問題リスト</h2>
@@ -135,6 +136,16 @@
             <h4>@ソウケンキ</h4>
         </div>
     </div>
+
+
+    <script>
+        function login() {
+            alert("この機能は、また開発していません");
+        }
+    </script>
+
+
 </body>
+
 
 </html>

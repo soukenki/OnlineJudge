@@ -13,11 +13,11 @@ void Test1()
     bool ret = Solution().isPalindrome(121);
     if (ret)
     {
-        std::cout << "テストケース 1 が実行した、テスト値は 121 ... OK!" << std::endl;
+        std::cout << "テストケース 1 が実行した..... OK!" << std::endl;
     }
     else
     {
-        std::cout << "テストケース 1 は失敗した、テスト値は 121 " << std::endl;
+        std::cout << "テストケース 1 は失敗した " << std::endl;
     }
 }
 
@@ -27,11 +27,11 @@ void Test2()
     bool ret = Solution().isPalindrome(-10);
     if (!ret)
     {
-        std::cout << "テストケース 2 が実行した、テスト値は -10 ... OK!" << std::endl;
+        std::cout << "テストケース 2 が実行した..... OK!" << std::endl;
     }
     else
     {
-        std::cout << "テストケース 2 は失敗した、テスト値は -10 " << std::endl;
+        std::cout << "テストケース 2 は失敗した" << std::endl;
     }
 }
 

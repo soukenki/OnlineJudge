@@ -28,7 +28,7 @@ namespace ns_model
         std::string title;   // 题目标题
         std::string star;    // 难度 （简单 中等 困难）
         int cpu_limit;       // 时间要求（S秒）
-        int men_limit;       // 空间要求（KB）
+        int mem_limit;       // 空间要求（KB）
         std::string desc;    // 题目描述
         std::string header;  // 题目预设的代码
         std::string tail;    // 测试用例
@@ -80,7 +80,10 @@ namespace ns_model
                 q.title = tokens[1];
                 q.star = tokens[2];
                 q.cpu_limit = atoi(tokens[3].c_str());
-                q.men_limit = atoi(tokens[4].c_str());
+                q.mem_limit = atoi(tokens[4].c_str());
+
+                // for test
+                // std::cout << "q.mem_limit : " << q.mem_limit << std::endl;
 
                 // 各个题目的唯一路径
                 std::string path = question_path;
@@ -97,7 +100,7 @@ namespace ns_model
             }
 
             LOG(INFO);
-            std::cout << "加载题库...成功！" << std::endl;
+            std::cout << "問題の読み取り...成功！" << std::endl;
             in.close();  // 关闭文件流
             
             return true;

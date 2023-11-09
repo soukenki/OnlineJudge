@@ -78,6 +78,15 @@
         .container .navbar .login {
             float: right;
         }
+
+        .container .footer {
+            width: 100%;
+            height: 50px;
+            text-align: center;
+            line-height: 50px;
+            color: #ccc;
+            margin-top: 15px;
+        }
     </style>
 </head>
 
@@ -88,16 +97,33 @@
             <a href="/">ホーム</a>
             <a href="/all_questions">試験問題</a>
             <!-- <a href="#">メッセージ</a> -->
-            <a class="login" href="#">ログイン</a>
-            <a href="#">本システムについて</a>
+            <a class="login" href="#" onclick="login()">ログイン</a>
+            <!-- <a href="#">本システムについて</a> -->
         </div>
         <!-- 网页内容-->
         <div class="content">
-            <h1 class="font_">学生試験システム</h1>
-            <p class="font_">プログラミング試験のために作った</p>
+            <h1 class="font_">学生試験システムの試行</h1>
+            <p class="font_">
+            本システムはプログラミング試験のために作ったものです。<br>
+            本システムでは個人情報を収集しません。<br>
+            また、本システムで得られたデータから個人が特定されることはありません。<br>
+            本システムで得られたデータは、研究終了後に破棄します。<br>
+            </p>
             <a class="font_" href="/all_questions">こちらにクリックしてから、試験をはじめる</a>
         </div>
+        <div class="footer">
+            <!-- <hr> -->
+            <h4>@ソウケンキ</h4>
+        </div>
     </div>
+
+
+    <script>
+        function login() {
+            alert("この機能は、また開発していません");
+        }
+    </script>
+
 
 </body>
 

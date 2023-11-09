@@ -77,13 +77,13 @@ namespace ns_compiler
                 if (FileUtil::IsFileExists(PathUtil::Exe(file_name)))
                 {
                     LOG(INFO);
-                    std::cout << PathUtil::Src(file_name) << " 编译成功" << std::endl;
+                    std::cout << PathUtil::Src(file_name) << " コンパイル成功" << std::endl;
                     return true; // 编译成功，运行文件存在
                 }
             }
 
             LOG(ERROR);
-            std::cout << "编译失败，没有形成可执行程序" << std::endl;
+            std::cout << "コンパイル失敗，プログラムが作成されない" << std::endl;
             return false;  // 编译失败，运行文件不在
         }
     

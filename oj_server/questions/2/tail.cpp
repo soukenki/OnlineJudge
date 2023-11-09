@@ -15,11 +15,11 @@ void Test1()
     int max = Solution().Max(v);
     if (max == 15)
     {
-        std::cout << "テストケース 1 が実行した、テスト値は {1, 2, 3, 4, 5, 6, -1, 15, 6} ... OK!" << std::endl;
+        std::cout << "テストケース 1 が実行した..... OK!" << std::endl;
     }
     else
     {
-        std::cout << "テストケース 1 は失敗した、テスト値は {1, 2, 3, 4, 5, 6, -1, 15, 6} " << std::endl;
+        std::cout << "テストケース 1 は失敗した" << std::endl;
     }
 }
 
@@ -30,11 +30,11 @@ void Test2()
     int max = Solution().Max(v);
     if (max == -1)
     {
-        std::cout << "テストケース 2 が実行した、テスト値は {-1, -2, -3} ... OK!" << std::endl;
+        std::cout << "テストケース 2 が実行した..... OK!" << std::endl;
     }
     else
     {
-        std::cout << "テストケース 2 は失敗した、テスト値は {-1, -2, -3} " << std::endl;
+        std::cout << "テストケース 2 は失敗した" << std::endl;
     }
 }
 

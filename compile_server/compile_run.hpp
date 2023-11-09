@@ -35,26 +35,29 @@ namespace ns_compile_and_run
                 desc = "コンパイルと実行が完了された";
                 break;
             case -1:
-                desc = "送信されたコードが空である";
+                desc = "エラー: 送信されたコードが空である！";
                 break;
             case -2:
-                desc = "不明なエラーが発生された";
+                desc = "エラー: 不明なエラーが発生された！";
                 break;
             case -3:
                 // desc = "コンパイルの際にエラーが発生された";
                 FileUtil::ReadFile(PathUtil::CompilerError(file_name), &desc, true); // 读取编译错误文件内容
                 break;
             case SIGABRT: // 6
-                desc = "メモリが範囲を超えている";
+                desc = "エラー: メモリが範囲を超えている！";
                 break;
             case SIGXCPU: // 24
-                desc = "CPU使用率のタイムアウト";
+                desc = "エラー: CPU使用率のタイムアウト！";
                 break;
             case SIGFPE: // 8
-                desc = "浮動小数点オーバーフロー";
+                desc = "エラー: 浮動小数点オーバーフロー！";
+                break;
+            case SIGSEGV:  // 11
+                desc = "エラー: 無効なメモリ参照！ (セグメンテーション違反)";
                 break;
             default:
-                desc = "エラー: " + std::to_string(code);
+                desc = "エラー: No." + std::to_string(code);
                 break;
             }
 
@@ -139,6 +142,10 @@ namespace ns_compile_and_run
             // 毫秒级时间戳+原子性递增唯一值：保证唯一性
             file_name = FileUtil::UniqFileName(); // 形成唯一文件名
 
+            // for test
+            // std::cout << "形成唯一文件名file_name: " << file_name << std::endl;
+
+
             if (!FileUtil::WriteFile(PathUtil::Src(file_name), code)) // 代码写到文件（形成临时src文件）
             {
                 status_code = -2; // 未知错误
@@ -150,8 +157,11 @@ namespace ns_compile_and_run
                 status_code = -3; // 代码编译时发生错误
                 goto END;
             }
+            
+            // for test
+            // std::cout << "cpu_limit, mem_limit: " << cpu_limit << ", " << mem_limit << std::endl;
 
-            run_result = Runner::Run(file_name, cpu_limit, mem_limit); // 运行
+            run_result = ns_runner::Runner::Run(file_name, cpu_limit, mem_limit); // 运行
             if (run_result < 0)
             {
                 status_code = -2; // 未知错误
@@ -160,6 +170,9 @@ namespace ns_compile_and_run
             {
                 // 程序运行崩溃
                 status_code = run_result;
+                
+                // for test
+                // std::cout << "程序运行崩溃status_code: " << status_code << std::endl;
             }
             else
             {
@@ -187,7 +200,7 @@ namespace ns_compile_and_run
             *out_json = writer.write(out_value); // 通过 输出型参数 回传
         
             // 清理临时文件
-            //RemoveTempFile(file_name);
+            RemoveTempFile(file_name);
         }
     };
 }

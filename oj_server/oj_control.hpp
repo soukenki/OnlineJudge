@@ -108,7 +108,7 @@ namespace ns_control
         {
             assert(LoadConf(service_machine));
             LOG(INFO);
-            std::cout << "加载" << service_machine << " 成功" << std::endl;
+            std::cout << "読み取り：" << service_machine << " 成功" << std::endl;
         }
 
         ~LoadBlance()
@@ -122,7 +122,7 @@ namespace ns_control
             if (!in.is_open())
             {
                 LOG(FATAL);
-                std::cout << "加载：" << machine_conf << "失败" << std::endl;
+                std::cout << "読み取り：" << machine_conf << "失敗" << std::endl;
                 return false;
             }
 
@@ -134,7 +134,7 @@ namespace ns_control
                 if (tokens.size() != 2)
                 {
                     LOG(WARNING);
-                    std::cout << "切分" << line << "失败" << std::endl;
+                    std::cout << "分割" << line << "失敗" << std::endl;
                     continue;
                 }
 
@@ -222,14 +222,14 @@ namespace ns_control
         {
             _mtx.lock();
             
-            std::cout << "OnLineのサーバー:";
+            std::cout << "OnLineのサーバー: ";
             for (auto &id : _online)
             {
                 std::cout << id << " ";
             }
             std::cout << std::endl;
 
-            std::cout << "OffLineのサーバー:";
+            std::cout << "OffLineのサーバー: ";
             for (auto &id : _offline)
             {
                 std::cout << id << " ";
@@ -302,6 +302,11 @@ namespace ns_control
         // input: ""
         void Judge(const std::string &number, const std::string in_json, std::string *out_json)
         {
+            // for test  测试前端过来的数据
+            // LOG(DEBUG);
+            // std::cout << in_json << "\nnumber:"<< number << "\n";  
+
+
             // 0. 根据题目编号number，拿到对应题目细节
             struct ns_model::Question q;
             _model.GetOneQuestion(number, &q);
@@ -317,7 +322,7 @@ namespace ns_control
             compile_value["input"] = in_value["input"].asString();
             compile_value["code"] = code + q.tail;     // 加测试用例
             compile_value["cpu_limit"] = q.cpu_limit;  // Json::Value可以直接接收int，string等
-            compile_value["mem-limit"] = q.men_limit;
+            compile_value["mem_limit"] = q.mem_limit;
             
             Json::FastWriter writer;
             std::string compile_string = writer.write(compile_value);   // 序列化
