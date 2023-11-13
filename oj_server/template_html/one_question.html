@@ -208,7 +208,7 @@
 
 
         function submit() {
-            // alert("送信完了されました。お疲れ様でした。");
+            // alert("送信完了されました。お疲れ様でした。実行の結果はテスト中..しばらくお待ちください。");
             // 1. 收集当前页面的有关数据, 1. 题号 2.代码
             // console.log("test");
             var code = editor.getSession().getValue();    // 获取代码
@@ -237,6 +237,9 @@
                     show_result(data);
                 }
             });
+
+            alert("送信完了されました。お疲れ様でした。実行の結果はテスト中......しばらくお待ちください。");
+            
 
             // 3. 得到结果，解析并显示到 result中
             function show_result(data) {

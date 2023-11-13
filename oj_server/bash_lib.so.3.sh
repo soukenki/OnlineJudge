@@ -1,4 +1,4 @@
-# 添加第三方库的环境变量
+# 第三方库环境变量
 
 sudo find / -name "libctemplate.so.3"
 
